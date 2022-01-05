@@ -1,0 +1,8 @@
+1- creacion e instacia del proyecto:
+	npx create-react-app my-app
+
+2- Ingresar en la carpeta del proyecto
+	cd my-app
+
+3 - levantar servidor reack
+	npm start
