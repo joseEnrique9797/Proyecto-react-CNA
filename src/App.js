@@ -222,6 +222,8 @@ class App extends React.Component {
     // }
   }
   
+  // data
+  
   // fetch al recargar el doom
   componentDidMount(prevProps) {
     this.getfetche();
