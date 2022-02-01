@@ -1,10 +1,14 @@
-import logo from './logo.svg';
+import logo from './cna.png';
 import './App.css';
-import React, { useRef, useState, useEffect, Suspense} from "react";
+import React from "react";
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import {Inject,ScheduleComponent, Day, Week, WorkWeek, Month, Agenda, ResourcesDirective, ResourceDirective} from '@syncfusion/ej2-react-schedule';
 import { extend, L10n } from '@syncfusion/ej2-base';
+
+import 'bootstrap/dist/css/bootstrap.css';
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
 
 
 import {createElement } from '@syncfusion/ej2-base';
@@ -73,7 +77,7 @@ class App extends React.Component {
   // peticion get al backend para citas
   // Trae las citas disponibles en el sistema del backend previamente almacenadas
   getfetche = () => {  
-    fetch (`/calendar/data`).then(res => res.json()).then(res => {
+    fetch (`http://cna.catics.online:8069/calendar/data`).then(res => res.json()).then(res => {
       var array = []
       // var count = 0
       for (var property in res) {
@@ -101,14 +105,14 @@ class App extends React.Component {
       
       // return res
     }).catch(function(error) {
-      alert("Can't connect to backend try latter", error);
+      alert("No se puede conectar con el backend", error);
     });
   }
 
   // peticion get al backend para salas
   // almacena todas las salas disponibles en el sistema para luego dejarlas disponible al agregar un evento desde el frontend
   getRoomfetche = () => {  
-    fetch (`/room/data`).then(res => res.json()).then(res => {
+    fetch (`http://cna.catics.online:8069/room/data`).then(res => res.json()).then(res => {
       this.setState({
         romsData: res,
       });
@@ -127,7 +131,7 @@ class App extends React.Component {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(arg.data[0])
       };
-      const response =  fetch (`/calendar/set_data`, requestOptions).then(res => res.json()).then(res => {
+      const response =  fetch (`http://cna.catics.online:8069/calendar/set_data`, requestOptions).then(res => res.json()).then(res => {
         
         if (res['result'] === true) {
           alert("Existe un traslape de horas con un evento anterior");
@@ -146,7 +150,7 @@ class App extends React.Component {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(arg.data)
       };
-      const response =  fetch (`/calendar/write_data`, requestOptions).then(res => res.json()).then(res => {
+      const response =  fetch (`http://cna.catics.online:8069/calendar/write_data`, requestOptions).then(res => res.json()).then(res => {
         s.scheduleObj.activeEventData.cancel = true
         if (res['result'] === true) {
           let Data = {
@@ -178,7 +182,7 @@ class App extends React.Component {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({data:arg.data[0]['Id']} )
       };
-      const response =  fetch (`/calendar/delete_data`, requestOptions).then(res => res.json()).then(res => {
+      const response =  fetch (`http://cna.catics.online:8069/calendar/delete_data`, requestOptions).then(res => res.json()).then(res => {
         if (res['result'] === true) {
           return
           // alert("Se eliminara el evento");
@@ -274,9 +278,19 @@ class App extends React.Component {
       // eventStyleGetter={this.eventStyleGetter.bind(this)}
       <div className="App">
         <header className="App-header">
+        
+          <div style={{ width: 1407}} >
+            <Row>
+              <Col xs={4}><img src={logo} alt="logo" style={{ width: 214}} /></Col>
+              <Col xs={4} style={{ textAlign: "center"}}><text>Reserva de sala</text></Col>
+              <Col xs={4} style={{ textAlign: "left"}}> </Col>
+            </Row>
+          </div>
+          
+          
           <ScheduleComponent ref={t => this.scheduleObj = t}  currentView = 'Month' selectedDate = {new Date()} eventSettings={{ dataSource: this.state.scheduleData ,
             fields: {
-              // id: 'Id',
+              id: 'Id',
               // cnaRoom: { validation: { required: true } },
               subject: { name: 'name', title: 'Nombre evento' , validation: { required: true }},
               location: { name: 'Locacion', title: 'Descripcion de la locación' },

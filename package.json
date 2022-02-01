@@ -1,6 +1,7 @@
 {
   "name": "cna-app",
   "version": "0.1.0",
+  "homepage": "http://www.my-react-app.com",
   "private": true,
   "dependencies": {
     "@syncfusion/ej2-react-buttons": "^19.4.38",
@@ -35,7 +36,7 @@
       "react-app/jest"
     ]
   },
-  "proxy": "http://cna.catics.online:8069",
+  
   "browserslist": {
     "production": [
       ">0.2%",
