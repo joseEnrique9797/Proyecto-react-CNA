@@ -277,18 +277,17 @@ class App extends React.Component {
       // fallback={<Loading />}
       // eventStyleGetter={this.eventStyleGetter.bind(this)}
       <div className="App">
-        <header className="App-header">
+        <header  style={{ height: 200, display: 'flex', flexDirection: 'column', fontSize:25, color: 'black'}}>
         
-          <div style={{ width: 1407}} >
+          <div style={{ width: 'auto'}} >
             <Row>
               <Col xs={4}><img src={logo} alt="logo" style={{ width: 214}} /></Col>
               <Col xs={4} style={{ textAlign: "center"}}><text>Reserva de sala</text></Col>
               <Col xs={4} style={{ textAlign: "left"}}> </Col>
             </Row>
           </div>
-          
-          
-          <ScheduleComponent ref={t => this.scheduleObj = t}  currentView = 'Month' selectedDate = {new Date()} eventSettings={{ dataSource: this.state.scheduleData ,
+        </header>
+        <ScheduleComponent height='600' width='auto'  ref={t => this.scheduleObj = t}  currentView = 'Month' selectedDate = {new Date()} eventSettings={{ dataSource: this.state.scheduleData ,
             fields: {
               id: 'Id',
               // cnaRoom: { validation: { required: true } },
@@ -303,7 +302,6 @@ class App extends React.Component {
           }actionBegin={this.onActionBegin.bind(this)     }  popupOpen={this.onPopupOpen.bind(this)}>
             <Inject services = {[Day, Week, WorkWeek, Month, Agenda]}/>
           </ScheduleComponent>
-        </header>
       </div>
     
     );
