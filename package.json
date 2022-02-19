@@ -5,6 +5,9 @@
   "private": true,
   "dependencies": {
     "@syncfusion/ej2-react-buttons": "^19.4.38",
+    "@syncfusion/ej2-react-calendars": "^19.4.52",
+    "@syncfusion/ej2-react-dropdowns": "^19.4.52",
+    "@syncfusion/ej2-react-lists": "^19.4.52",
     "@syncfusion/ej2-react-schedule": "^19.4.40",
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
@@ -36,7 +39,6 @@
       "react-app/jest"
     ]
   },
-  
   "browserslist": {
     "production": [
       ">0.2%",
