@@ -4,7 +4,7 @@ import React from "react";
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import {Inject,ScheduleComponent, Day, Week, WorkWeek, Month, Agenda, ResourcesDirective, ResourceDirective} from '@syncfusion/ej2-react-schedule';
-import { extend, L10n } from '@syncfusion/ej2-base';
+import { extend,loadCldr ,L10n } from '@syncfusion/ej2-base';
 
 import 'bootstrap/dist/css/bootstrap.css';
 import Col from 'react-bootstrap/Col';
@@ -19,16 +19,145 @@ import { TextBox } from '@syncfusion/ej2-inputs'
 // import { scheduleData } from './datasource';
 
 // diccionario de idioma para botones 
+import * as numberingSystems from "./culture-files/numberingSystems.json";
+import * as gregorian from "./culture-files/ca-gregorian.json";
+import * as numbers from "./culture-files/numbers.json";
+import * as timeZoneNames from "./culture-files/timeZoneNames.json";
+
+loadCldr(numberingSystems, gregorian, numbers, timeZoneNames);
 L10n.load({
-  'en-US': {
-      'schedule': {
-          'saveButton': 'Guardar',
-          'cancelButton': 'Close',
-          'deleteButton': 'Remove',
-          'newEvent': 'Agregar evento',
-      },
+  
+  es: {
+    schedule: {
+      day: "Día",
+      week: "Semana",
+      workWeek: "Semana de trabajo",
+      month: "Mes",
+      agenda: "Agenda",
+      weekAgenda: "Agenda de la semana",
+      workWeekAgenda: "Agenda de la semana laboral",
+      monthAgenda: "Agenda del mes",
+      today: "Hoy",
+      noEvents: "No hay eventos",
+      emptyContainer: "No hay eventos programados para este día.",
+      allDay: "Todo el dia",
+      start: "comienzo",
+      end: "Final",
+      more: "más",
+      close: "Cerca",
+      cancel: "Cancelar",
+      noTitle: "(Sin título)",
+      delete: "Eliminar",
+      deleteEvent: "Este evento",
+      deleteMultipleEvent: "Eliminar múltiples eventos",
+      selectedItems: "Artículos seleccionados",
+      deleteSeries: "Serie completa",
+      edit: "Editar",
+      editSeries: "Serie completa",
+      editEvent: "Este evento",
+      createEvent: "Crear",
+      subject: "Tema",
+      addTitle: "Añadir título",
+      moreDetails: "Más detalles",
+      save: "Salvar",
+      editContent: "¿Cómo le gustaría cambiar la cita en la serie?",
+      deleteContent: "¿Seguro que quieres eliminar este evento?",
+      deleteMultipleContent:
+        "¿Estás seguro de que deseas eliminar los eventos seleccionados?",
+      newEvent: "Nuevo evento",
+      title: "Título",
+      location: "Ubicación",
+      description: "Descripción",
+      timezone: "Zona horaria",
+      startTimezone: "Zona horaria de inicio",
+      endTimezone: "Zona horaria final",
+      repeat: "Repetir",
+      saveButton: "Salvar",
+      cancelButton: "Cancelar",
+      deleteButton: "Eliminar",
+      recurrence: "Reaparición",
+      wrongPattern: "El patrón de recurrencia no es válido.",
+      seriesChangeAlert:
+        "¿Desea cancelar los cambios realizados en instancias específicas de esta serie y volver a vincularlos con toda la serie?",
+      createError:
+        "La duración del evento debe ser más corta que la frecuencia con la que ocurre. Acorte la duración o cambie el patrón de recurrencia en el editor de eventos de recurrencia.",
+      sameDayAlert:
+        "Dos ocurrencias del mismo evento no pueden ocurrir en el mismo día.",
+      editRecurrence: "Editar recurrencia",
+      repeats: "Repite",
+      alert: "Alerta",
+      startEndError:
+        "La fecha de finalización seleccionada ocurre antes de la fecha de inicio.",
+      invalidDateError: "El valor de la fecha ingresada no es válido.",
+      blockAlert:
+        "Los eventos no se pueden programar dentro del rango de tiempo bloqueado.",
+      ok: "Okay",
+      yes: "si",
+      no: "No",
+      occurrence: "Ocurrencia",
+      series: "Serie",
+      previous: "Anterior",
+      next: "próximo",
+      timelineDay: "Día de la línea de tiempo",
+      timelineWeek: "Semana de la línea de tiempo",
+      timelineWorkWeek: "Semana laboral cronológica",
+      timelineMonth: "Mes de la línea de tiempo",
+      timelineYear: "Cronología Año",
+      editFollowingEvent: "Eventos siguientes",
+      deleteTitle: "Eliminar evento",
+      editTitle: "Editar evento",
+      beginFrom: "Comience desde",
+      endAt: "Termina en"
+    },
+    recurrenceeditor: {
+      none: "Ninguna",
+      daily: "Diario",
+      weekly: "Semanal",
+      monthly: "Mensual",
+      month: "Mes",
+      yearly: "Anual",
+      never: "Nunca",
+      until: "Hasta",
+      count: "Contar",
+      first: "primero",
+      second: "Segundo",
+      third: "Tercero",
+      fourth: "Cuarto",
+      last: "Último",
+      repeat: "Repetir",
+      repeatEvery: "Repite cada",
+      on: "Repetir en",
+      end: "Final",
+      onDay: "Día",
+      days: "Dias)",
+      weeks: "Semanas)",
+      months: "Meses)",
+      years: "Años)",
+      every: "cada",
+      summaryTimes: "veces)",
+      summaryOn: "en",
+      summaryUntil: "hasta",
+      summaryRepeat: "Repite",
+      summaryDay: "dias)",
+      summaryWeek: "semanas)",
+      summaryMonth: "meses)",
+      summaryYear: "años)",
+      monthWeek: "Mes Semana",
+      monthPosition: "Posición del mes",
+      monthExpander: "Expansor de mes",
+      yearExpander: "Expansor de año",
+      repeatInterval: "Intervalo de repetición"
+    },
+    calendar: {
+      today: "Hoy"
+    }
   }
 });
+
+
+
+
+
 
 // funcion para cookie token
 function getCookie(name) {
@@ -47,6 +176,7 @@ function getCookie(name) {
 }
 
 class App extends React.Component {
+  
   constructor(props) {
     super(props);
     
@@ -78,6 +208,38 @@ class App extends React.Component {
     };
   }
 
+  get_validate_required_fields(letra){
+    // onClick=escribe('0')
+    if ( (document.getElementById("cnaToken").value === ''  &&  document.getElementById("cnaToken").style.display !== 'none'  )   || document.getElementById("cnaRoom").value === ''  || document.getElementById('confirmSend').getElementsByClassName("e-list-item e-level-1 e-checklist")[0].ariaSelected === 'false' || document.getElementById("cnaEmployee").value === '') {
+      document.getElementsByClassName("e-control e-btn e-lib e-primary e-event-save e-flat")[0].setAttribute('style', 'display:None;')
+    }
+    else{
+      document.getElementsByClassName("e-control e-btn e-lib e-primary e-event-save e-flat")[0].setAttribute('style', '')
+    }
+  }
+
+
+  get_confirmation(letra){
+    // onClick=escribe('0')
+    if ( (document.getElementById("cnaToken").value === ''  &&  document.getElementById("cnaToken").style.display !== 'none'  )   || document.getElementById("cnaRoom").value === '' || document.getElementById("cnaEmployee").value === '') {
+      alert("Faltan campos obligatorios");
+      document.getElementById('confirmSend').getElementsByClassName("e-checkbox-wrapper e-css e-listview-checkbox e-checkbox-left")[0].setAttribute('aria-selected', false)
+      document.getElementById('confirmSend').getElementsByClassName("e-checkbox-wrapper e-css e-listview-checkbox e-checkbox-left")[0].setAttribute('aria-checked', false)
+      document.getElementById('confirmSend').getElementsByClassName("e-checkbox-wrapper e-css e-listview-checkbox e-checkbox-left")[0].getElementsByClassName("e-frame e-icons")[0].setAttribute('class', 'e-frame e-icons')
+      document.getElementById('confirmSend').getElementsByClassName("e-list-item e-level-1 e-checklist")[0].setAttribute('aria-selected', false)
+    }
+    else{
+      //pass
+    }
+
+    if ( (document.getElementById("cnaToken").value === ''  &&  document.getElementById("cnaToken").style.display !== 'none'  )   || document.getElementById("cnaRoom").value === ''  || document.getElementById('confirmSend').getElementsByClassName("e-list-item e-level-1 e-checklist")[0].ariaSelected === 'false' || document.getElementById("cnaEmployee").value === '') {
+      document.getElementsByClassName("e-control e-btn e-lib e-primary e-event-save e-flat")[0].setAttribute('style', 'display:None;')
+    }
+    else{
+      document.getElementsByClassName("e-control e-btn e-lib e-primary e-event-save e-flat")[0].setAttribute('style', '')
+    }
+
+  }
 
   // peticion get al backend para citas
   // Trae las citas disponibles en el sistema del backend previamente almacenadas
@@ -85,20 +247,40 @@ class App extends React.Component {
     fetch (`http://cna.catics.online:8069/calendar/data`).then(res => res.json()).then(res => {
       var array = []
       // var count = 0
-      for (var property in res) {
-        array.push({
-          // external_id: res[property]['external_id'],
-          // DataColor: '#cb6bb2' ,
-          Id: res[property]['external_id'],
-          name:  res[property]['Subject'],
-          cnaInventory :  res[property]['check_box'],
-          cnaRoom :  res[property]['cnaroom'],
-          StartTime: new Date( res[property]['StartTime']['year'],  res[property]['StartTime']['month'],  res[property]['StartTime']['day'],  res[property]['StartTime']['hour'],  res[property]['StartTime']['minute']),
-          EndTime: new Date( res[property]['EndTime']['year'],  res[property]['EndTime']['month'],  res[property]['EndTime']['day'],  res[property]['EndTime']['hour'],  res[property]['EndTime']['minute']),
-        })
-
-        // count += 1
+      if (res) {
+        for (var property in res) {
+          array.push({
+            // external_id: res[property]['external_id'],
+            // DataColor: '#cb6bb2' ,
+            Id: res[property]['external_id'],
+            CategoryColor:  res[property]['CategoryColor'],
+            name:  res[property]['Subject'],
+            cnaEmployee :  res[property]['cnaEmployee'],
+            Locacion :  res[property]['Locacion'],
+            Description :  res[property]['Description'],
+            cnaInventory :  res[property]['check_box'],
+            cnaRoom :  res[property]['cnaroom'],
+            StartTime: new Date( res[property]['StartTime']['year'],  res[property]['StartTime']['month'],  res[property]['StartTime']['day'],  res[property]['StartTime']['hour'],  res[property]['StartTime']['minute']),
+            EndTime: new Date( res[property]['EndTime']['year'],  res[property]['EndTime']['month'],  res[property]['EndTime']['day'],  res[property]['EndTime']['hour'],  res[property]['EndTime']['minute']),
+          })
+        }
       }
+      // else{
+      //   array.push({
+      //     // external_id: res[property]['external_id'],
+      //     // DataColor: '#cb6bb2' ,
+      //     Id: 0,
+      //     name:  '',
+      //     cnaToken :  '',
+      //     cnaEmployee :  '',
+      //     Locacion :  '',
+      //     Description :  '',
+      //     cnaInventory :  [],
+      //     cnaRoom :  '',
+      //     StartTime: '',
+      //     EndTime: '',
+      //   })
+      // }
 
 
      
@@ -153,17 +335,41 @@ class App extends React.Component {
 
   // peticion post al backend
   async setfetche(arg) {  
+    
+    
     var s = this
-    // create ================================
-    if (arg.requestType === 'eventCreate') {
-      let data_check_box = []
-      for (var select_var in document.getElementById('cnaInventory').getElementsByClassName("e-list-item e-level-1 e-checklist e-active")) {
-        if (document.getElementById('cnaInventory').getElementsByClassName("e-list-item e-level-1 e-checklist e-active")[select_var].id  != undefined) {
-          data_check_box.push(document.getElementById('cnaInventory').getElementsByClassName("e-list-item e-level-1 e-checklist e-active")[select_var].id)
+    
+    let data_check_box = []
+    let data_check_box_scheduleData = []
+    
+    // bloque de codigo para obtener los elementos seleccionados y los guardados del check box
+    for (var select_var in document.getElementById('cnaInventory').getElementsByClassName("e-list-item e-level-1 e-checklist e-active")) {
+      if (document.getElementById('cnaInventory').getElementsByClassName("e-list-item e-level-1 e-checklist e-active")[select_var].id  != undefined) {
+        data_check_box.push( parseInt(document.getElementById('cnaInventory').getElementsByClassName("e-list-item e-level-1 e-checklist e-active")[select_var].id.replace('cnaInventory_', ''), 10)   )
+      }
+    }
+    for (var obj_i in this.state.scheduleData) {
+      if (this.state.scheduleData[obj_i]['Id']  === arg.data.Id ) {
+        for (var indice in this.state.scheduleData[obj_i]['cnaInventory']) {
+          data_check_box_scheduleData.push(this.state.scheduleData[obj_i]['cnaInventory'][indice])
         }
       }
-      
+    }
+    // calcula la diferencia en el checkBox (si existen cambios a registrar)
+    const diff_data_check_box_scheduleData = data_check_box_scheduleData.filter(e => !data_check_box.includes(e))
+    const diff_data_check_box = data_check_box.filter(e => !data_check_box_scheduleData.includes(e))
+    
+    // fin bloque-=========================================
 
+
+    // create ================================
+    if (arg.requestType === 'eventCreate') {
+      // let data_check_box = []
+      // for (var select_var in document.getElementById('cnaInventory').getElementsByClassName("e-list-item e-level-1 e-checklist e-active")) {
+      //   if (document.getElementById('cnaInventory').getElementsByClassName("e-list-item e-level-1 e-checklist e-active")[select_var].id  != undefined) {
+      //     data_check_box.push(document.getElementById('cnaInventory').getElementsByClassName("e-list-item e-level-1 e-checklist e-active")[select_var].id)
+      //   }
+      // }
       let data_post = {
         data:arg.data[0],
         data_check_box:data_check_box
@@ -184,20 +390,20 @@ class App extends React.Component {
           alert("El token de acceso para el evento "+ arg.data[0].name +' es: '+ JSON.parse(res['result'])['token'] );
         }
 
+        for (var obj_i in s.state.scheduleData) {
+          if (s.state.scheduleData[obj_i]['Id']  === arg.data[0].Id ) {
+            s.state.scheduleData[obj_i]['cnaInventory'] = data_check_box
+          }
+        }
+
       }).catch(function(error) {
         return false
       });
     }
     
     // write ================================
-    if (arg.requestType === 'eventChange' && ( s.scheduleObj.activeEventData.event.name != arg.data.name || s.scheduleObj.activeEventData.event.StartTime != arg.data.StartTime  || s.scheduleObj.activeEventData.event.EndTime != arg.data.EndTime   )  ) {
-      
-      let data_check_box = []
-      for (var select_var in document.getElementById('cnaInventory').getElementsByClassName("e-list-item e-level-1 e-checklist e-active")) {
-        if (document.getElementById('cnaInventory').getElementsByClassName("e-list-item e-level-1 e-checklist e-active")[select_var].id  != undefined) {
-          data_check_box.push( parseInt(document.getElementById('cnaInventory').getElementsByClassName("e-list-item e-level-1 e-checklist e-active")[select_var].id.replace('cnaInventory_', ''), 10)   )
-        }
-      }
+    
+    if (arg.requestType === 'eventChange' && (  diff_data_check_box_scheduleData.length > 0  || diff_data_check_box.length > 0  ||  s.scheduleObj.activeEventData.event.Description != arg.data.Description ||  s.scheduleObj.activeEventData.event.cnaEmployee != arg.data.cnaEmployee ||  s.scheduleObj.activeEventData.event.cnaRoom != arg.data.cnaRoom ||   s.scheduleObj.activeEventData.event.name != arg.data.name || s.scheduleObj.activeEventData.event.StartTime != arg.data.StartTime  || s.scheduleObj.activeEventData.event.EndTime != arg.data.EndTime   )  ) {
       let data_post_write = {
         data:arg.data,
         data_check_box:data_check_box
@@ -209,7 +415,6 @@ class App extends React.Component {
         body: JSON.stringify(data_post_write)
       };
       const response =  fetch (`http://cna.catics.online:8069/calendar/write_data`, requestOptions).then(res => res.json()).then(res => {
-        s.scheduleObj.activeEventData.cancel = true
         if (JSON.parse(res['result'])['error'] === true) {
           if (JSON.parse(res['result'])['type'] === 'token_undefined') {
             alert("Para editar un evento ingrese un token");
@@ -218,6 +423,10 @@ class App extends React.Component {
           else if (JSON.parse(res['result'])['type'] === 'token_format') {
             alert("El token debe de estar compuesto por 4 numeros comprendidos entre 0-9 eje: 0000, 0101, 9999 ");
           }
+
+          else if (JSON.parse(res['result'])['type'] === 'token_invalid') {
+            alert("El token ingresado es incorrecto, contacte con el administrador para que le proporcione el token valido para este evento.");
+          }
           
           let Data = {
             Id: s.scheduleObj.activeEventData.event.Id,
@@ -225,34 +434,72 @@ class App extends React.Component {
             StartTime: s.scheduleObj.activeEventData.event.StartTime,
             EndTime: s.scheduleObj.activeEventData.event.EndTime,
             cnaRoom: s.scheduleObj.activeEventData.event.cnaRoom,
+            cnaEmployee: s.scheduleObj.activeEventData.event.cnaEmployee,
             name: s.scheduleObj.activeEventData.event.name,
             Description: s.scheduleObj.activeEventData.event.Description,
+            Locacion : s.scheduleObj.activeEventData.event.Locacion,
           };
           
+          
+          // resetear a nivel visual el check box a los valores previos 
+          for (var obj_i in s.state.scheduleData) {
+            for (var select_var in document.getElementById('cnaInventory').getElementsByClassName("e-list-item e-level-1 e-checklist")) {
+              if (s.state.scheduleData[obj_i]['Id'] === s.scheduleObj.activeEventData.event.Id ) {
+                if (document.getElementById('cnaInventory').getElementsByClassName("e-list-item e-level-1 e-checklist")[select_var].id  != undefined) {
+                  if ( s.state.scheduleData[obj_i]['cnaInventory'] &&  s.state.scheduleData[obj_i]['cnaInventory'].includes(  parseInt(document.getElementById('cnaInventory').getElementsByClassName("e-list-item e-level-1 e-checklist")[select_var].id.replace('cnaInventory_', ''), 10)  ) ) {
+                    document.getElementById('cnaInventory').getElementsByClassName("e-list-item e-level-1 e-checklist")[select_var].setAttribute('class', 'e-list-item e-level-1 e-checklist e-active')
+                    document.getElementById('cnaInventory').getElementsByClassName("e-checkbox-wrapper e-css e-listview-checkbox e-checkbox-left")[select_var].setAttribute('aria-selected', true)
+                    document.getElementById('cnaInventory').getElementsByClassName("e-checkbox-wrapper e-css e-listview-checkbox e-checkbox-left")[select_var].setAttribute('aria-checked', true)
+                    document.getElementById('cnaInventory').getElementsByClassName("e-checkbox-wrapper e-css e-listview-checkbox e-checkbox-left")[select_var].getElementsByClassName("e-frame e-icons")[0].setAttribute('class', 'e-frame e-icons e-check')
+                    document.getElementById('cnaInventory').getElementsByClassName("e-list-item e-level-1 e-checklist")[select_var].setAttribute('aria-selected', true)
+                  }
+                  else{
+                    document.getElementById('cnaInventory').getElementsByClassName("e-list-item e-level-1 e-checklist")[select_var].setAttribute('class', 'e-list-item e-level-1 e-checklist')
+                    document.getElementById('cnaInventory').getElementsByClassName("e-checkbox-wrapper e-css e-listview-checkbox e-checkbox-left")[select_var].setAttribute('aria-selected', false)
+                    document.getElementById('cnaInventory').getElementsByClassName("e-checkbox-wrapper e-css e-listview-checkbox e-checkbox-left")[select_var].setAttribute('aria-checked', false)
+                    document.getElementById('cnaInventory').getElementsByClassName("e-checkbox-wrapper e-css e-listview-checkbox e-checkbox-left")[select_var].getElementsByClassName("e-frame e-icons")[0].setAttribute('class', 'e-frame e-icons')
+                    document.getElementById('cnaInventory').getElementsByClassName("e-list-item e-level-1 e-checklist")[select_var].setAttribute('aria-selected', false)
+                  }
+  
+                }
+
+
+              }
+              
+            }
+          }
+
+          s.scheduleObj.saveEvent(Data);
+        }
+
+        else{
           for (var obj_i in this.state.scheduleData) {
             if (this.state.scheduleData[obj_i]['Id']  === arg.data.Id ) {
               this.state.scheduleData[obj_i]['cnaInventory'] = data_check_box
             }
           }
-          
-          s.scheduleObj.saveEvent(Data);
-          arg.requestType = false
-          return
         }
+        
       }).catch(function(error) {
         s.scheduleObj.activeEventData.cancel = true
         return false
       });
     }
+    else{
+      arg.data.cnaInventory = data_check_box
+    }
+    
 
-
+    // unlink ======================================
     if (arg.requestType === 'eventRemove') {
       const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({data:arg.data[0]['Id']} )
+        body: JSON.stringify(arg.data[0])
       };
       const response =  fetch (`http://cna.catics.online:8069/calendar/delete_data`, requestOptions).then(res => res.json()).then(res => {
+        // arg.deletedRecords = []
+        // s.scheduleObj.addEvent(arg.deletedRecords[0]);
         if (res['result'] === true) {
           return
           // alert("Se eliminara el evento");
@@ -264,34 +511,24 @@ class App extends React.Component {
     }
   }
   
+  // funcion para modificar los colores por salas
+  onEventRendered(args) {
+    if (args.data.CategoryColor === undefined ) {
+      for ( var index in  this.state.romsData) {
+        if (args.data.cnaRoom === this.state.romsData[index].value) {
+          args.data.CategoryColor = this.state.romsData[index].RoomColor
+        }
+      }
+    }
+    args.element.style.backgroundColor = args.data.CategoryColor;
+    
+  }
+  
   // registra eventos nuevos
   onActionBegin(args){
     if (args.requestType === 'eventCreate' || args['requestType'] === "eventChange"  || args['requestType'] === "eventRemove"){
       this.setfetche(args)
     }
-    // cambiar textos de la barra
-    // if (args['requestType'] === "toolbarItemRendering") {
-    //   for (var property in args['items']) {
-        
-    //     console.log('recorre el for============================>', property)
-        
-    //     if (args['items'][property]['text'] === "Today") {
-    //       args['items'][property]['text'] = "Hoy"
-    //     }
-    //     if (args['items'][property]['text'] === "Day") {
-    //       args['items'][property]['text'] = "Dia"
-    //     }
-    //     if (args['items'][property]['text'] === "Week") {
-    //       args['items'][property]['text'] = "Semana"
-    //     }
-    //     if (args['items'][property]['text'] === "Work Week") {
-    //       args['items'][property]['text'] = "Semana de trabajo"
-    //     }
-    //     if (args['items'][property]['text'] === "Month") {
-    //       args['items'][property]['text'] = "Mes"
-    //     }
-    //   }
-    // }
   }
   
   // fetch al recargar el doom
@@ -300,26 +537,29 @@ class App extends React.Component {
     this.getRoomfetche();
     this.getEmployeefetche();
     this.getInventoryfetche();
+
   };
 
   onPopupOpen(args) {
     // opcion para editar la ventana, agregar campos nuevos a la modal de registro
-    
     if (args.type === 'Editor') {
+      document.getElementsByClassName("e-control e-btn e-lib e-primary e-event-save e-flat")[0].setAttribute('style', 'display:None;')
+      
       if (!args.element.querySelector('.custom-field-row')) {
           let row = createElement('div', { className: 'custom-field-row' });
-          let formElement = args.element.querySelector('.e-schedule-form');
-          formElement.firstChild.insertBefore(row, formElement.firstChild.firstChild);
+          let formElement = args.element.querySelector('.e-schedule-form').querySelector('.e-description-row');
+          
+          formElement.firstChild.insertBefore(row, formElement.firstChild.firstChild.nextSibling);
           let container = createElement('div', { className: 'custom-field-container' });
           
           // declaracion de la variable cnaRoom
-          let inputEle = createElement('input1', {
-              className: 'e-field', attrs: { name: 'cnaRoom' , validation: { required: true }}
+          let inputEle = createElement('input', {
+              className: 'e-field', attrs: { name: 'cnaRoom' , id: 'cnaRoom' }
           });
 
           // declaracion de la variable cnaEmployee
-          let inputEmployee = createElement('input2', {
-              className: 'e-field', attrs: { name: 'cnaEmployee' , validation: { required: true }}
+          let inputEmployee = createElement('input', {
+              className: 'e-field', attrs: { name: 'cnaEmployee' , id: 'cnaEmployee'}
           });
 
           // declaracion de la variable Inventory
@@ -330,10 +570,16 @@ class App extends React.Component {
 
           // declaracion de la variable cnaToken
           let inputCnaToken = createElement('input', {
-            className: 'e-field e-input', attrs: { name: 'cnaToken', id: 'cnaToken'}
+            className: 'e-field e-input', attrs: { name: 'cnaToken', id: 'cnaToken', required: true}
+          });
+
+
+          // declaracion de inputConfirmSend
+          let inputConfirmSend = createElement('input5', {
+            className: 'e-list-content', attrs: { name: 'confirmSend', id: 'confirmSend', required: true}
           });
           
-          container.appendChild(inputCnaToken);
+          
           // array para cnaRoom
           var array = []
           array = this.state.romsData
@@ -347,48 +593,55 @@ class App extends React.Component {
           let drowDownList = new DropDownList({
             // rellenar la data
             dataSource: array,
-            fields: { text: 'text', value: 'value' , validation: { required: true }},
+            fields: { text: 'text', value: 'value'},
             value: args.data.cnaRoom,
             // nombre del campo padre, definido en la lista
-            floatLabelType: 'Always', placeholder: 'Salas'
+            floatLabelType: 'Always', placeholder: 'Sala'
           });
 
           let drowDownEmployee = new DropDownList({
             // rellenar la data
             dataSource: arrayEmployee,
-            fields: { tooltip: 'text',text:'text',id:'id'},
+            fields: { text: 'text', value: 'value' , validation: { required: true }},
             value: args.data.cnaEmployee,
             // nombre del campo padre, definido en la lista
-            floatLabelType: 'Always', placeholder: 'Empleados'
+            floatLabelType: 'Always', placeholder: 'Responsable'
           });
 
 
-          // let d = [
-          //   { text: 'Camaras' },
-          //   { text: 'Carpa' },
-          //   { text: 'Mesa' },
-          //   { text: 'Sillas' },
-          //   { text: 'Manteles' },
-          // ];
+          let d = [
+            { text: 'Estoy de acuerdo con la Información registrada.', id:1 },
+          ];
 
           container.appendChild(inputInventory);
+          container.appendChild(inputCnaToken);
+          container.appendChild(inputConfirmSend);
           row.appendChild(container);
 
           
           let ListViewInventory = new ListView({
               //Set the data to datasource property
               dataSource: this.state.inventoryData,
-              headerTitle: 'Equipo a utilizar',
+              headerTitle: 'Requerimientos',
               showHeader: true,
               value: args.data.cnaInventory,
               //Enable checkbox
               showCheckBox: true,
           });
 
+          
+          
+          let ConfirmSend = new ListView({
+            //Set the data to datasource property
+            dataSource: d,
+            showCheckBox: true,
+        });
+
           let TextCnaToken = new TextBox ({
             //Set the data to datasource property
             placeholder: 'Token',
             value: args.data.cnaToken,
+            required : true
           });
           
           // let ListViewInventory = new ListView({
@@ -419,11 +672,22 @@ class App extends React.Component {
 
           TextCnaToken.appendTo(inputCnaToken);
           inputCnaToken.setAttribute('name', 'cnaToken');
+
+          ConfirmSend.appendTo(inputConfirmSend);
+          inputConfirmSend.setAttribute('name', 'ConfirmSend');
+      
+          
+          
+      }
+      else{
+        document.getElementById('cnaToken').setAttribute('style', 'display:block;')
+        // document.getElementById('cnaToken').setAttribute('aria-required', 'true')
       }
       
       for (var obj_i in this.state.scheduleData) {
         if (this.state.scheduleData[obj_i]['Id']  === args.data.Id) {
           for (var select_var in document.getElementById('cnaInventory').getElementsByClassName("e-list-item e-level-1 e-checklist")) {
+            
             if (document.getElementById('cnaInventory').getElementsByClassName("e-list-item e-level-1 e-checklist")[select_var].id  != undefined) {
               if ( this.state.scheduleData[obj_i]['cnaInventory'] &&  this.state.scheduleData[obj_i]['cnaInventory'].includes(  parseInt(document.getElementById('cnaInventory').getElementsByClassName("e-list-item e-level-1 e-checklist")[select_var].id.replace('cnaInventory_', ''), 10)  ) ) {
                 document.getElementById('cnaInventory').getElementsByClassName("e-list-item e-level-1 e-checklist")[select_var].setAttribute('class', 'e-list-item e-level-1 e-checklist e-active')
@@ -440,8 +704,6 @@ class App extends React.Component {
                 document.getElementById('cnaInventory').getElementsByClassName("e-list-item e-level-1 e-checklist")[select_var].setAttribute('aria-selected', false)
               }
 
-              // para true
-              
             }
           }
         }
@@ -467,9 +729,33 @@ class App extends React.Component {
 
       }
 
+      document.getElementById('cnaToken').onchange = this.get_validate_required_fields  
+      document.getElementById('cnaRoom_hidden').onchange = this.get_validate_required_fields  
+      document.getElementById('cnaEmployee_hidden').onchange = this.get_validate_required_fields 
+      
+      document.getElementById('confirmSend').onclick = this.get_confirmation 
+      
+      
+      
+
+
       // elimina campos no necesarios zona horaria, duracion todo el dia etc
       document.getElementsByClassName("e-all-day-time-zone-row")[0].setAttribute('style', 'display:None;')
       document.getElementsByClassName("e-input-wrapper e-form-left")[0].setAttribute('style', 'display:None;')
+
+      // elimina el boton delete
+      document.getElementsByClassName("e-control e-btn e-lib e-event-delete e-flat")[0].setAttribute('style', 'display:None;')
+      // oculta description_location
+      document.getElementsByClassName("e-location-container")[0].setAttribute('style', 'display:None;')
+      document.getElementsByClassName("e-subject-container")[0].setAttribute('style', 'width:100%;')
+      
+      
+      // resetea a false el check de confirmacion
+      document.getElementById('confirmSend').getElementsByClassName("e-checkbox-wrapper e-css e-listview-checkbox e-checkbox-left")[0].setAttribute('aria-selected', false)
+      document.getElementById('confirmSend').getElementsByClassName("e-checkbox-wrapper e-css e-listview-checkbox e-checkbox-left")[0].setAttribute('aria-checked', false)
+      document.getElementById('confirmSend').getElementsByClassName("e-checkbox-wrapper e-css e-listview-checkbox e-checkbox-left")[0].getElementsByClassName("e-frame e-icons")[0].setAttribute('class', 'e-frame e-icons')
+      document.getElementById('confirmSend').getElementsByClassName("e-list-item e-level-1 e-checklist")[0].setAttribute('aria-selected', false)
+      
     }
     
     this.scheduleObj.activeCellsData.isAllDay = false
@@ -485,30 +771,29 @@ class App extends React.Component {
       // eventStyleGetter={this.eventStyleGetter.bind(this)}
       <div className="App">
         <header  style={{ height: 130, display: 'flex', flexDirection: 'column', fontSize:25, color: 'black'}}>
-        
           <div style={{ width: 'auto'}} >
             <Row>
               <Col xs={4}><img src={logo} alt="logo" style={{ width: 214}} /></Col>
-              <Col xs={4} style={{ textAlign: "center"}}><text>Reserva de sala</text></Col>
+              <Col xs={4} style={{ textAlign: "center"}}><text style={{ fontWeight: 600}} >CONSEJO NACIONAL ANTICORRUPCIÓN</text> <br></br>    <text>ADMINISTRACIÓN Y RECURSOS HUMANOS</text> <br></br>  <text>Reserva de salas</text> <br></br> </Col>
               <Col xs={4} style={{ textAlign: "left"}}> </Col>
             </Row>
           </div>
         </header>
-        <ScheduleComponent height='600' width='auto'  ref={t => this.scheduleObj = t}  currentView = 'Month' selectedDate = {new Date()} eventSettings={{ dataSource: this.state.scheduleData ,
+        <ScheduleComponent locale = 'es'  height='600' width='auto'  ref={t => this.scheduleObj = t}  currentView = 'Month' selectedDate = {new Date()} eventSettings={{ dataSource: this.state.scheduleData ,
             fields: {
               id: 'Id',
               // cnaRoom: { validation: { required: true } },
-              // cnaToken: { name: 'name', title: 'Token' },
+              cnaToken: { name: 'cnaToken', title: 'Token', validation: { required: true } },
               subject: { name: 'name', title: 'Nombre evento' , validation: { required: true }},
               location: { name: 'Locacion', title: 'Descripcion de la locación' },
-              description: { name: 'Description', title: 'Event Description' },
+              description: { name: 'Description', title: 'Descripcion del evento' },
               startTime: { name: 'StartTime', title: 'Desde' },
               endTime: { name: 'EndTime', title: 'Hasta' },
               IsAllDay: { default: false}
             }}
           
           
-          }actionBegin={this.onActionBegin.bind(this)     }  popupOpen={this.onPopupOpen.bind(this)}>
+          }actionBegin={this.onActionBegin.bind(this)     }  popupOpen={this.onPopupOpen.bind(this)}  eventRendered={this.onEventRendered.bind(this)}>
             <Inject services = {[Day, Week, WorkWeek, Month, Agenda]}/>
           </ScheduleComponent>
       </div>
