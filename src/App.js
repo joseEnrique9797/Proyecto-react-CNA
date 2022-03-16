@@ -6,6 +6,8 @@ import 'react-datepicker/dist/react-datepicker.css';
 import {Inject,ScheduleComponent, Day, Week, WorkWeek, Month, Agenda, ResourcesDirective, ResourceDirective} from '@syncfusion/ej2-react-schedule';
 import { extend,loadCldr ,L10n } from '@syncfusion/ej2-base';
 
+import { DialogUtility } from '@syncfusion/ej2-popups';
+
 import 'bootstrap/dist/css/bootstrap.css';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
@@ -155,10 +157,6 @@ L10n.load({
 });
 
 
-
-
-
-
 // funcion para cookie token
 function getCookie(name) {
   if (!document.cookie) {
@@ -222,7 +220,10 @@ class App extends React.Component {
   get_confirmation(letra){
     // onClick=escribe('0')
     if ( (document.getElementById("cnaToken").value === ''  &&  document.getElementById("cnaToken").style.display !== 'none'  )   || document.getElementById("cnaRoom").value === '' || document.getElementById("cnaEmployee").value === '') {
-      alert("Faltan campos obligatorios");
+      DialogUtility.alert( {
+        content:"Faltan campos obligatorios.",
+        title : 'Información'
+      })
       document.getElementById('confirmSend').getElementsByClassName("e-checkbox-wrapper e-css e-listview-checkbox e-checkbox-left")[0].setAttribute('aria-selected', false)
       document.getElementById('confirmSend').getElementsByClassName("e-checkbox-wrapper e-css e-listview-checkbox e-checkbox-left")[0].setAttribute('aria-checked', false)
       document.getElementById('confirmSend').getElementsByClassName("e-checkbox-wrapper e-css e-listview-checkbox e-checkbox-left")[0].getElementsByClassName("e-frame e-icons")[0].setAttribute('class', 'e-frame e-icons')
@@ -244,7 +245,7 @@ class App extends React.Component {
   // peticion get al backend para citas
   // Trae las citas disponibles en el sistema del backend previamente almacenadas
   getfetche = () => {  
-    fetch (`http://cna.catics.online:8069/calendar/data`).then(res => res.json()).then(res => {
+    fetch (`https://sig.cna.hn/calendar/data`).then(res => res.json()).then(res => {
       var array = []
       // var count = 0
       if (res) {
@@ -282,9 +283,6 @@ class App extends React.Component {
       //   })
       // }
 
-
-     
-      // if (res != false) {
       this.setState({
         scheduleData: array,
         // DataisLoaded: true
@@ -293,19 +291,25 @@ class App extends React.Component {
       
       // return res
     }).catch(function(error) {
-      alert("No se puede conectar con el backend", error);
+      DialogUtility.alert( {
+        content:"No se puede conectar con el backend. Contacte con el administrador.",
+        title : 'Información'
+      })
     });
   }
 
   // peticion get al backend para salas
   // almacena todas las salas disponibles en el sistema para luego dejarlas disponible al agregar un evento desde el frontend
   getRoomfetche = () => {  
-    fetch (`http://cna.catics.online:8069/room/data`).then(res => res.json()).then(res => {
+    fetch (`https://sig.cna.hn/room/data`).then(res => res.json()).then(res => {
       this.setState({
         romsData: res,
       });
     }).catch(function(error) {
-      alert("Ocurrio un error al traer las salas disponibles", error);
+      DialogUtility.alert( {
+        content:"Ocurrio un error al traer las salas disponibles. Contacte con el administrador.",
+        title : 'Información'
+      })
     });
   }
 
@@ -313,26 +317,44 @@ class App extends React.Component {
   // peticion get al backend para empleados
   // almacena todos los empleados disponibles en el sistema para luego mostrarlos en el frontend
   getEmployeefetche = () => {  
-    fetch (`http://cna.catics.online:8069/employee/data`).then(res => res.json()).then(res => {
+    fetch (`https://sig.cna.hn/employee/data`).then(res => res.json()).then(res => {
       this.setState({
         employeeData: res,
       });
     }).catch(function(error) {
-      alert("Ocurrio un error al traer los empleados disponibles", error);
+      DialogUtility.alert( {
+        content:"Ocurrio un error al traer los empleados disponibles. Contacte con el administrador.",
+        title : 'Información'
+      })
     });
   }
 
   // peticion get al backend para el equipo que se puede utilizar
   getInventoryfetche = () => {  
-    fetch (`http://cna.catics.online:8069/inventory/data`).then(res => res.json()).then(res => {
+    fetch (`https://sig.cna.hn/inventory/data`).then(res => res.json()).then(res => {
       this.setState({
         inventoryData: res,
       });
     }).catch(function(error) {
-      alert("Ocurrio un error al traer los requerimientos", error);
+      DialogUtility.alert( {
+        content:"Ocurrio un error al traer los requerimientos. Contacte con el administrador.",
+        title : 'Información'
+      })
     });
   }
 
+  // get_dialog(){
+  //   return DialogUtility.alert({
+  //     title: 'Alert Dialog',
+  //     content: "This is an Alert Dialog!",
+  //     okButton: {  text: 'OK', click: okClick.bind(this) },
+  //     showCloseIcon: true,
+  //     closeOnEscape: true,
+  //     animationSettings: { effect: 'Zoom' }
+  //   });
+  // }
+  
+  
   // peticion post al backend
   async setfetche(arg) {  
     
@@ -380,14 +402,29 @@ class App extends React.Component {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data_post)
       };
-      const response =  fetch (`http://cna.catics.online:8069/calendar/set_data`, requestOptions).then(res => res.json()).then(res => {
+      const response =  fetch (`https://sig.cna.hn/calendar/set_data`, requestOptions).then(res => res.json()).then(res => {
         
         if (JSON.parse(res['result'])['error'] === true) {
-          alert("Existe un traslape de horas con un evento anterior");
+          if (JSON.parse(res['result'])['type'] === 'before_today') {
+            DialogUtility.alert( {
+              content:"No se puede editar o crear actividades anteriores a la fecha actual.",
+              title : 'Información'
+            })
+          }
+
+          else if (JSON.parse(res['result'])['type'] === 'date_overlap') {
+            DialogUtility.alert( {
+              content:"Existe un traslape de horas con un evento anterior.",
+              title : 'Información'
+            })
+          }
           s.scheduleObj.deleteEvent(arg.addedRecords[0].Id);
         }
         else if (JSON.parse(res['result'])['error'] === false) {
-          alert("El token de acceso para el evento "+ arg.data[0].name +' es: '+ JSON.parse(res['result'])['token'] );
+          DialogUtility.alert( {
+            content:"El código para la actividad "+ arg.data[0].name +' es: '+ JSON.parse(res['result'])['token'] + ". \n\n Un mensaje de confirmación se ha enviado a su correo electrónico.",
+            title : 'Información'
+          })
         }
 
         for (var obj_i in s.state.scheduleData) {
@@ -414,18 +451,42 @@ class App extends React.Component {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data_post_write)
       };
-      const response =  fetch (`http://cna.catics.online:8069/calendar/write_data`, requestOptions).then(res => res.json()).then(res => {
+      const response =  fetch (`https://sig.cna.hn/calendar/write_data`, requestOptions).then(res => res.json()).then(res => {
         if (JSON.parse(res['result'])['error'] === true) {
+          
           if (JSON.parse(res['result'])['type'] === 'token_undefined') {
-            alert("Para editar un evento ingrese un token");
+            DialogUtility.alert( {
+              content:"Para editar la actividad ingrese el código asociado.",
+              title : 'Información'
+            })
+          }
+
+          else if (JSON.parse(res['result'])['type'] === 'date_overlap') {
+            DialogUtility.alert( {
+              content:"Existe un traslape de horas con un evento anterior.",
+              title : 'Información'
+            })
+          }
+
+          else if (JSON.parse(res['result'])['type'] === 'before_today') {
+            DialogUtility.alert( {
+              content:"No se puede editar o crear actividades anteriores a la fecha actual.",
+              title : 'Información'
+            })
           }
 
           else if (JSON.parse(res['result'])['type'] === 'token_format') {
-            alert("El token debe de estar compuesto por 4 numeros comprendidos entre 0-9 eje: 0000, 0101, 9999 ");
+            DialogUtility.alert( {
+              content:"El código debe de estar compuesto por 4 números comprendidos entre 0-9 eje: 0000, 0101, 9999.",
+              title : 'Información'
+            })
           }
 
           else if (JSON.parse(res['result'])['type'] === 'token_invalid') {
-            alert("El token ingresado es incorrecto, contacte con el administrador para que le proporcione el token valido para este evento.");
+            DialogUtility.alert( {
+              content:"El código ingresado es incorrecto, contacte con el administrador para que le proporcione el código válido para la actividad.",
+              title : 'Información'
+            })
           }
           
           let Data = {
@@ -485,9 +546,9 @@ class App extends React.Component {
         return false
       });
     }
-    else{
-      arg.data.cnaInventory = data_check_box
-    }
+    // else{
+    //   arg.data.cnaInventory = data_check_box
+    // }
     
 
     // unlink ======================================
@@ -497,7 +558,7 @@ class App extends React.Component {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(arg.data[0])
       };
-      const response =  fetch (`http://cna.catics.online:8069/calendar/delete_data`, requestOptions).then(res => res.json()).then(res => {
+      const response =  fetch (`https://sig.cna.hn/calendar/delete_data`, requestOptions).then(res => res.json()).then(res => {
         // arg.deletedRecords = []
         // s.scheduleObj.addEvent(arg.deletedRecords[0]);
         if (res['result'] === true) {
@@ -513,6 +574,16 @@ class App extends React.Component {
   
   // funcion para modificar los colores por salas
   onEventRendered(args) {
+    let name_employe
+    
+    for ( var index in  this.state.employeeData) {
+      if (args.data.cnaEmployee === this.state.employeeData[index].value) {
+        name_employe = this.state.employeeData[index].text
+      }
+    }
+
+    args.element.innerHTML =  "<div class=\"e-appointment-details\"><div class=\"e-subject\">" + name_employe + "</div> <div class=\"e-subject\">" + args.data.name + "</div><div class=\"e-time\">" +  args.element.innerText.replace(args.data.name, "") + "</div></div>"
+    
     if (args.data.CategoryColor === undefined ) {
       for ( var index in  this.state.romsData) {
         if (args.data.cnaRoom === this.state.romsData[index].value) {
@@ -522,6 +593,8 @@ class App extends React.Component {
     }
     args.element.style.backgroundColor = args.data.CategoryColor;
     
+
+    // args.element.style.height = '300'+'px';
   }
   
   // registra eventos nuevos
@@ -548,18 +621,31 @@ class App extends React.Component {
       if (!args.element.querySelector('.custom-field-row')) {
           let row = createElement('div', { className: 'custom-field-row' });
           let formElement = args.element.querySelector('.e-schedule-form').querySelector('.e-description-row');
-          
           formElement.firstChild.insertBefore(row, formElement.firstChild.firstChild.nextSibling);
           let container = createElement('div', { className: 'custom-field-container' });
+          
+          
+          let rowBefore = createElement('div', { className: 'custom-field-row' });
+          let formElementBefore = args.element.querySelector('.e-schedule-form');
+          formElementBefore.firstChild.insertBefore(rowBefore, formElementBefore.firstChild.firstChild);
+          let container_before = createElement('div', { className: 'custom-field-container' });
+          
+          // declaracion de la variable cnaEmployee
+          let inputEmployee = createElement('input', {
+            className: 'e-field', attrs: { name: 'cnaEmployee' , id: 'cnaEmployee'}
+          });
+
+          // array para cnaEmployee
+          var arrayEmployee = []
+          arrayEmployee = this.state.employeeData
+          container_before.appendChild(inputEmployee);
+          rowBefore.appendChild(container_before);
+
+          
           
           // declaracion de la variable cnaRoom
           let inputEle = createElement('input', {
               className: 'e-field', attrs: { name: 'cnaRoom' , id: 'cnaRoom' }
-          });
-
-          // declaracion de la variable cnaEmployee
-          let inputEmployee = createElement('input', {
-              className: 'e-field', attrs: { name: 'cnaEmployee' , id: 'cnaEmployee'}
           });
 
           // declaracion de la variable Inventory
@@ -585,11 +671,7 @@ class App extends React.Component {
           array = this.state.romsData
           container.appendChild(inputEle);
 
-          // array para cnaEmployee
-          var arrayEmployee = []
-          arrayEmployee = this.state.employeeData
-          container.appendChild(inputEmployee);
-
+          
           let drowDownList = new DropDownList({
             // rellenar la data
             dataSource: array,
@@ -618,6 +700,7 @@ class App extends React.Component {
           container.appendChild(inputConfirmSend);
           row.appendChild(container);
 
+          
           
           let ListViewInventory = new ListView({
               //Set the data to datasource property
@@ -769,17 +852,23 @@ class App extends React.Component {
     return (
       // fallback={<Loading />}
       // eventStyleGetter={this.eventStyleGetter.bind(this)}
+      
       <div className="App">
         <header  style={{ height: 130, display: 'flex', flexDirection: 'column', fontSize:25, color: 'black'}}>
           <div style={{ width: 'auto'}} >
             <Row>
-              <Col xs={4}><img src={logo} alt="logo" style={{ width: 214}} /></Col>
-              <Col xs={4} style={{ textAlign: "center"}}><text style={{ fontWeight: 600}} >CONSEJO NACIONAL ANTICORRUPCIÓN</text> <br></br>    <text>ADMINISTRACIÓN Y RECURSOS HUMANOS</text> <br></br>  <text>Reserva de salas</text> <br></br> </Col>
-              <Col xs={4} style={{ textAlign: "left"}}> </Col>
+              <Col xs={3}><img src={logo} alt="logo" style={{ width: 214}} /></Col>
+              
+              {window.screen.width >= 900 ?   <Col xs={7} style={{ textAlign: "center"}}><text style={{ fontWeight: 600}} >CONSEJO NACIONAL ANTICORRUPCIÓN</text> <br></br>    <text>ADMINISTRACIÓN Y RECURSOS HUMANOS</text> <br></br>  <text>Reserva de salas</text> <br></br> </Col>          :       <text></text> }
+
+              
+              
+              
+              <Col xs={2} style={{ textAlign: "left"}}> </Col>
             </Row>
           </div>
         </header>
-        <ScheduleComponent locale = 'es'  height='600' width='auto'  ref={t => this.scheduleObj = t}  currentView = 'Month' selectedDate = {new Date()} eventSettings={{ dataSource: this.state.scheduleData ,
+        <ScheduleComponent locale = 'es' timezone='America/Tegucigalpa'    height='600' width='auto'  ref={t => this.scheduleObj = t}  currentView = 'Week' selectedDate = {new Date()} eventSettings={{ dataSource: this.state.scheduleData ,
             fields: {
               id: 'Id',
               // cnaRoom: { validation: { required: true } },
@@ -794,7 +883,7 @@ class App extends React.Component {
           
           
           }actionBegin={this.onActionBegin.bind(this)     }  popupOpen={this.onPopupOpen.bind(this)}  eventRendered={this.onEventRendered.bind(this)}>
-            <Inject services = {[Day, Week, WorkWeek, Month, Agenda]}/>
+            <Inject services = {[Week ,Day, WorkWeek, Month, Agenda]}/>
           </ScheduleComponent>
       </div>
     
